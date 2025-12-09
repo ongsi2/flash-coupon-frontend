@@ -1,15 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { couponAPI } from '@/lib/api';
-import type { Coupon, IssuedCoupon } from '@/lib/types';
+import type { Coupon, IssuedCoupon, User } from '@/lib/types';
 import Link from 'next/link';
 
 export default function UserPage() {
-  const [userId, setUserId] = useState('e38477b7-1220-4edf-ba33-c1e87608eaf4');
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [userId, setUserId] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ISSUED' | 'USED' | 'EXPIRED' | undefined>();
   const queryClient = useQueryClient();
+
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
+      setCurrentUser(user);
+      setUserId(user.id);
+    }
+  }, []);
 
   // Fetch available coupons
   const { data: availableCoupons = [], isLoading: couponsLoading } = useQuery({
@@ -77,6 +90,15 @@ export default function UserPage() {
     }
   };
 
+  const handleLogout = () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      localStorage.removeItem('currentUser');
+      setCurrentUser(null);
+      setUserId('');
+      router.push('/');
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('ko-KR');
   };
@@ -92,30 +114,65 @@ export default function UserPage() {
     return now >= start && now <= end && (coupon.stats?.remainingCount ?? 0) > 0;
   };
 
+  // Redirect to register if no user
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full mx-4 bg-white rounded-lg shadow-lg p-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">로그인이 필요합니다</h2>
+          <p className="text-gray-600 mb-6">쿠폰을 발급받으려면 먼저 회원가입을 해주세요.</p>
+          <div className="space-y-3">
+            <Link
+              href="/register"
+              className="block w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+            >
+              회원가입하기
+            </Link>
+            <Link
+              href="/"
+              className="block w-full py-3 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+            >
+              홈으로 돌아가기
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">사용자 쿠폰 페이지</h1>
-          <Link
-            href="/"
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-          >
-            홈으로
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+            >
+              홈으로
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            >
+              로그아웃
+            </button>
+          </div>
         </div>
 
         <div className="mb-8 p-4 bg-white rounded-lg shadow">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            사용자 ID
-          </label>
-          <input
-            type="text"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="사용자 ID를 입력하세요"
-          />
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-500">현재 로그인한 사용자</p>
+              <p className="text-lg font-bold text-gray-900">{currentUser.name}</p>
+              <p className="text-sm text-gray-600">{currentUser.email}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-500">사용자 ID</p>
+              <p className="text-xs text-gray-700 font-mono">{currentUser.id}</p>
+            </div>
+          </div>
         </div>
 
         {/* Available Coupons */}

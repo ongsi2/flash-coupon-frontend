@@ -1,6 +1,19 @@
+'use client';
+
 import Link from "next/link";
+import { useState, useEffect } from 'react';
+import type { User } from '@/lib/types';
 
 export default function Home() {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser));
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-16">
@@ -11,6 +24,14 @@ export default function Home() {
           <p className="text-center text-gray-600 mb-12 text-lg">
             선착순 쿠폰 발급 시스템 - Redis 기반 고성능 동시성 처리
           </p>
+
+          {currentUser && (
+            <div className="mb-8 p-4 bg-white rounded-lg shadow-md text-center">
+              <p className="text-sm text-gray-600">
+                환영합니다, <strong className="text-blue-600">{currentUser.name}</strong>님!
+              </p>
+            </div>
+          )}
 
           <div className="grid md:grid-cols-2 gap-6">
             <Link
@@ -66,14 +87,19 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-12 p-6 bg-white rounded-lg shadow text-center">
-            <p className="text-gray-600">
-              <strong>테스트 사용자 ID:</strong> e38477b7-1220-4edf-ba33-c1e87608eaf4
-            </p>
-            <p className="text-sm text-gray-500 mt-2">
-              위 ID를 복사하여 사용자 페이지에서 테스트하세요
-            </p>
-          </div>
+          {!currentUser && (
+            <div className="mt-12 p-6 bg-white rounded-lg shadow text-center">
+              <p className="text-gray-800 font-medium mb-4">
+                쿠폰을 발급받으려면 먼저 회원가입이 필요합니다
+              </p>
+              <Link
+                href="/register"
+                className="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              >
+                회원가입하기
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

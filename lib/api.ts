@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Coupon, CreateCouponDto, IssueResult, MyCouponsResponse } from './types';
+import type { Coupon, CreateCouponDto, IssueResult, MyCouponsResponse, User, CreateUserDto } from './types';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -52,6 +52,12 @@ export const couponAPI = {
 
   useCoupon: async (issuedCouponId: string, userId: string) => {
     const { data } = await api.post(`/api/user/coupons/${issuedCouponId}/use`, { userId });
+    return data;
+  },
+
+  // User Registration
+  createUser: async (dto: CreateUserDto): Promise<User> => {
+    const { data } = await api.post('/users/test', dto);
     return data;
   },
 };
