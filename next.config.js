@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  basePath: '/flash-coupon',
+  assetPrefix: '/flash-coupon',
+  output: 'standalone',
 };
 
 module.exports = nextConfig;
