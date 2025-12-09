@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { couponAPI } from '@/lib/api';
 import type { Coupon } from '@/lib/types';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function AdminPage() {
   const { data: coupons = [], isLoading, refetch } = useQuery({
@@ -11,6 +12,8 @@ export default function AdminPage() {
     queryFn: () => couponAPI.getCoupons(),
     refetchInterval: 5000,
   });
+
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('ko-KR', {
@@ -26,12 +29,37 @@ export default function AdminPage() {
     refetch();
   };
 
+  const handleSyncRedis = async () => {
+    if (!confirm('PostgreSQL 데이터를 기준으로 Redis를 재동기화하시겠습니까?')) {
+      return;
+    }
+
+    setIsSyncing(true);
+    try {
+      const result = await couponAPI.syncRedis();
+      alert(`✅ ${result.message}`);
+      refetch();
+    } catch (error) {
+      console.error('Redis sync failed:', error);
+      alert('❌ Redis 재동기화 실패');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">관리자 대시보드</h1>
           <div className="flex gap-3">
+            <button
+              onClick={handleSyncRedis}
+              disabled={isSyncing}
+              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSyncing ? '⏳ 동기화 중...' : '🔄 Redis 재동기화'}
+            </button>
             <button
               onClick={handleRefresh}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"

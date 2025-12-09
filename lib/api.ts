@@ -35,6 +35,11 @@ export const couponAPI = {
     return data;
   },
 
+  syncRedis: async (): Promise<{ message: string; synced: number }> => {
+    const { data } = await api.post('/api/admin/coupons/sync/redis');
+    return data;
+  },
+
   // User API
   getMyCoupons: async (
     userId: string,
