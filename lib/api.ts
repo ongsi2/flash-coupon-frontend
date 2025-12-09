@@ -57,7 +57,7 @@ export const couponAPI = {
 
   // User Registration
   createUser: async (dto: CreateUserDto): Promise<User> => {
-    const { data } = await api.post('/users/test', dto);
+    const { data } = await api.post('/api/users/test', dto);
     return data;
   },
 };
