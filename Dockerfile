@@ -26,6 +26,9 @@ COPY package*.json ./
 # Install production dependencies only
 RUN npm ci --only=production
 
+# Install TypeScript for next.config.ts
+RUN npm install typescript
+
 # Copy built application from builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
