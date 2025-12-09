@@ -32,7 +32,7 @@ RUN npm install typescript
 # Copy built application from builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/next.config.js ./
 
 # Expose port
 EXPOSE 3001
