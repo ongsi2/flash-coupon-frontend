@@ -188,6 +188,112 @@ export default function Home() {
               </Link>
             </motion.div>
           )}
+
+          {/* Architecture & Flow */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-14"
+          >
+            <div className="mb-6 text-center">
+              <p className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm text-sm font-medium text-gray-700 border border-indigo-100">
+                <Zap className="w-4 h-4 text-indigo-600" />
+                아키텍처 & 흐름 한눈에 보기
+              </p>
+              <h2 className="mt-3 text-3xl font-bold text-gray-900">
+                초당 발급을 지탱하는 핵심 설계
+              </h2>
+              <p className="mt-2 text-gray-600">
+                Redis 원자 처리 + DB 세이프티넷 + 헬스 모니터링으로 안정적 발급/사용을 보장합니다.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="relative p-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5" />
+                <div className="relative flex items-center gap-3 mb-3">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 font-bold">
+                    1
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-indigo-600">Atomic Issue</p>
+                    <h3 className="text-lg font-bold text-gray-900">Redis Lua 원자 발급</h3>
+                  </div>
+                </div>
+                <p className="relative text-gray-700 text-sm leading-relaxed">
+                  중복 체크 → 재고 확인 → 감소를 한 스크립트로 처리해 레이스 컨디션을 차단하고, TTL로 발급 흔적을 관리합니다.
+                </p>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="relative p-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5" />
+                <div className="relative flex items-center gap-3 mb-3">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 font-bold">
+                    2
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-emerald-600">Safety Net</p>
+                    <h3 className="text-lg font-bold text-gray-900">DB Unique 세이프티</h3>
+                  </div>
+                </div>
+                <p className="relative text-gray-700 text-sm leading-relaxed">
+                  `(userId, couponId)` 유니크로 2차 중복을 차단하고, 발급/사용 내역을 영속화해 통계와 추적성을 확보합니다.
+                </p>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ y: -4 }}
+                className="relative p-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-amber-500/5" />
+                <div className="relative flex items-center gap-3 mb-3">
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-amber-50 text-amber-600 font-bold">
+                    3
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-amber-600">Sync & Health</p>
+                    <h3 className="text-lg font-bold text-gray-900">Redis-DB 동기화/모니터링</h3>
+                  </div>
+                </div>
+                <p className="relative text-gray-700 text-sm leading-relaxed">
+                  관리자가 Redis 재고를 DB 기준으로 동기화할 수 있고, 실시간 대시보드로 발급률/재고를 모니터링합니다.
+                </p>
+              </motion.div>
+            </div>
+
+            <div className="mt-8 p-6 bg-white rounded-2xl shadow-lg border border-gray-100">
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-sm font-semibold">
+                  <Activity className="w-4 h-4" />
+                  Data Flow
+                </span>
+                <span className="text-xs text-gray-500">클라이언트 → API → Redis → DB</span>
+              </div>
+              <div className="grid md:grid-cols-4 gap-4 text-sm text-gray-800">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 shadow-sm">
+                  <p className="font-bold text-gray-900 mb-1">1) 요청</p>
+                  <p className="text-gray-600">프론트에서 발급/사용 API 호출 (React Query로 폴링/캐싱).</p>
+                </div>
+                <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-indigo-100 shadow-sm">
+                  <p className="font-bold text-gray-900 mb-1">2) Redis</p>
+                  <p className="text-gray-600">Lua 스크립트로 중복/재고 체크·감소, 발급 흔적 TTL 기록.</p>
+                </div>
+                <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-100 shadow-sm">
+                  <p className="font-bold text-gray-900 mb-1">3) DB</p>
+                  <p className="text-gray-600">성공 건만 비동기 영속화, 유니크 제약으로 2차 보호.</p>
+                </div>
+                <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 shadow-sm">
+                  <p className="font-bold text-gray-900 mb-1">4) 관측/동기화</p>
+                  <p className="text-gray-600">실시간 대시보드로 수치 확인, 필요 시 Redis 재고를 DB 기준으로 재계산.</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </div>
