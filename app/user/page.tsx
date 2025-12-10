@@ -6,6 +6,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { couponAPI } from '@/lib/api';
 import type { Coupon, IssuedCoupon, User } from '@/lib/types';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Home, LogOut, User as UserIcon, Tag, Clock, CheckCircle, XCircle, Ticket, TrendingUp, Filter } from 'lucide-react';
 
 export default function UserPage() {
   const router = useRouter();
@@ -117,201 +119,311 @@ export default function UserPage() {
   // Redirect to register if no user
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full mx-4 bg-white rounded-lg shadow-lg p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">로그인이 필요합니다</h2>
-          <p className="text-gray-600 mb-6">쿠폰을 발급받으려면 먼저 회원가입을 해주세요.</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full mx-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-8 text-center border border-gray-100"
+        >
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg shadow-indigo-500/30">
+            <UserIcon className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            로그인이 필요합니다
+          </h2>
+          <p className="text-gray-600 mb-8">쿠폰을 발급받으려면 먼저 회원가입을 해주세요.</p>
           <div className="space-y-3">
             <Link
               href="/register"
-              className="block w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+              className="flex items-center justify-center gap-2 w-full py-4 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 font-semibold shadow-lg shadow-indigo-500/30 transition-all"
             >
+              <UserIcon className="w-5 h-5" />
               회원가입하기
             </Link>
             <Link
               href="/"
-              className="block w-full py-3 px-4 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
+              className="flex items-center justify-center gap-2 w-full py-4 px-4 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 font-medium transition-all"
             >
+              <Home className="w-5 h-5" />
               홈으로 돌아가기
             </Link>
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">사용자 쿠폰 페이지</h1>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-            >
-              홈으로
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-            >
-              로그아웃
-            </button>
-          </div>
-        </div>
-
-        <div className="mb-8 p-4 bg-white rounded-lg shadow">
-          <div className="flex items-center justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
             <div>
-              <p className="text-sm text-gray-500">현재 로그인한 사용자</p>
-              <p className="text-lg font-bold text-gray-900">{currentUser.name}</p>
-              <p className="text-sm text-gray-600">{currentUser.email}</p>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                사용자 쿠폰 페이지
+              </h1>
+              <p className="text-gray-600">쿠폰 발급 및 관리</p>
             </div>
-            <div className="text-right">
-              <p className="text-xs text-gray-500">사용자 ID</p>
-              <p className="text-xs text-gray-700 font-mono">{currentUser.id}</p>
+            <div className="flex items-center gap-3">
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 rounded-xl hover:bg-gray-50 shadow-md border border-gray-200 transition-all font-medium"
+                >
+                  <Home className="w-4 h-4" />
+                  홈으로
+                </Link>
+              </motion.div>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleLogout}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/30 transition-all font-medium"
+              >
+                <LogOut className="w-4 h-4" />
+                로그아웃
+              </motion.button>
             </div>
           </div>
-        </div>
+
+          <div className="p-6 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-gray-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-indigo-500/30">
+                  <UserIcon className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">현재 로그인한 사용자</p>
+                  <p className="text-xl font-bold text-gray-900">{currentUser.name}</p>
+                  <p className="text-sm text-gray-600">{currentUser.email}</p>
+                </div>
+              </div>
+              <div className="text-right bg-gray-50 px-4 py-2 rounded-xl">
+                <p className="text-xs text-gray-500 mb-1">사용자 ID</p>
+                <p className="text-sm text-gray-700 font-mono font-semibold">{currentUser.id}</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Available Coupons */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">사용 가능한 쿠폰</h2>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-12"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <Tag className="w-6 h-6 text-indigo-600" />
+            <h2 className="text-3xl font-bold text-gray-900">사용 가능한 쿠폰</h2>
+          </div>
           {couponsLoading ? (
-            <p className="text-gray-500">로딩 중...</p>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-12 text-center border border-gray-100">
+              <Ticket className="w-12 h-12 text-indigo-600 animate-pulse mx-auto mb-4" />
+              <p className="text-gray-600">로딩 중...</p>
+            </div>
           ) : availableCoupons.length === 0 ? (
-            <p className="text-gray-500">사용 가능한 쿠폰이 없습니다.</p>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-12 text-center border border-gray-100">
+              <XCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">사용 가능한 쿠폰이 없습니다.</p>
+            </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {availableCoupons.map((coupon: Coupon) => (
-                <div
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {availableCoupons.map((coupon: Coupon, index: number) => (
+                <motion.div
                   key={coupon.id}
-                  className="p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group relative overflow-hidden p-6 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl transition-all border border-gray-100"
                 >
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {coupon.name}
-                  </h3>
-                  <p className="text-3xl font-bold text-blue-600 mb-3">
-                    {coupon.discountValue}
-                    {coupon.discountType === 'AMOUNT' ? '원' : '%'} 할인
-                  </p>
-                  <div className="space-y-1 text-sm text-gray-600 mb-4">
-                    <p>총 수량: {coupon.totalQuantity}개</p>
-                    <p>
-                      남은 수량:{' '}
-                      <span className="font-bold text-blue-600">
-                        {coupon.stats?.remainingCount ?? 0}개
-                      </span>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full -mr-12 -mt-12" />
+
+                  <div className="relative">
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-xl font-bold text-gray-900 flex-1">
+                        {coupon.name}
+                      </h3>
+                      <Ticket className="w-6 h-6 text-indigo-600" />
+                    </div>
+
+                    <p className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                      {coupon.discountValue}
+                      {coupon.discountType === 'AMOUNT' ? '원' : '%'}
                     </p>
-                    <p>발급: {coupon.stats?.issuedCount ?? 0}개</p>
-                    <p className="text-xs">
-                      기간: {formatDate(coupon.startAt)} ~{' '}
-                      {formatDate(coupon.endAt)}
-                    </p>
+
+                    <div className="space-y-2 mb-6">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">총 수량</span>
+                        <span className="font-semibold text-gray-900">{coupon.totalQuantity}개</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">남은 수량</span>
+                        <span className="font-bold text-indigo-600">
+                          {coupon.stats?.remainingCount ?? 0}개
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">발급 완료</span>
+                        <span className="font-semibold text-emerald-600">{coupon.stats?.issuedCount ?? 0}개</span>
+                      </div>
+                      <div className="pt-2 border-t border-gray-100">
+                        <div className="flex items-start gap-2 text-xs text-gray-500">
+                          <Clock className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <div>{formatDate(coupon.startAt)}</div>
+                            <div>~ {formatDate(coupon.endAt)}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <motion.button
+                      whileHover={{ scale: isCouponAvailable(coupon) ? 1.02 : 1 }}
+                      whileTap={{ scale: isCouponAvailable(coupon) ? 0.98 : 1 }}
+                      onClick={() => handleIssueCoupon(coupon.id)}
+                      disabled={!isCouponAvailable(coupon) || issueMutation.isPending}
+                      className={`w-full py-3 px-4 rounded-xl font-semibold shadow-lg transition-all ${
+                        isCouponAvailable(coupon)
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-indigo-500/30'
+                          : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      {issueMutation.isPending ? '발급 중...' : isCouponAvailable(coupon) ? '발급받기' : '발급 불가'}
+                    </motion.button>
                   </div>
-                  <button
-                    onClick={() => handleIssueCoupon(coupon.id)}
-                    disabled={
-                      !isCouponAvailable(coupon) ||
-                      issueMutation.isPending
-                    }
-                    className={`w-full py-2 px-4 rounded-lg font-medium ${
-                      isCouponAvailable(coupon)
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                  >
-                    {issueMutation.isPending
-                      ? '발급 중...'
-                      : isCouponAvailable(coupon)
-                      ? '발급받기'
-                      : '발급 불가'}
-                  </button>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* My Coupons */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">내 쿠폰</h2>
-            <select
-              value={statusFilter || ''}
-              onChange={(e) =>
-                setStatusFilter(
-                  e.target.value as 'ISSUED' | 'USED' | 'EXPIRED' | undefined
-                )
-              }
-              className="px-4 py-2 border border-gray-300 rounded-lg"
-            >
-              <option value="">전체</option>
-              <option value="ISSUED">사용 가능</option>
-              <option value="USED">사용 완료</option>
-              <option value="EXPIRED">만료</option>
-            </select>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <Ticket className="w-6 h-6 text-purple-600" />
+              <h2 className="text-3xl font-bold text-gray-900">내 쿠폰</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5 text-gray-600" />
+              <select
+                value={statusFilter || ''}
+                onChange={(e) =>
+                  setStatusFilter(
+                    e.target.value as 'ISSUED' | 'USED' | 'EXPIRED' | undefined
+                  )
+                }
+                className="px-4 py-2.5 border border-gray-200 rounded-xl bg-white shadow-md font-medium text-gray-700 hover:border-gray-300 transition-all"
+              >
+                <option value="">전체</option>
+                <option value="ISSUED">사용 가능</option>
+                <option value="USED">사용 완료</option>
+                <option value="EXPIRED">만료</option>
+              </select>
+            </div>
           </div>
 
           {myCouponsLoading ? (
-            <p className="text-gray-500">로딩 중...</p>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-12 text-center border border-gray-100">
+              <Ticket className="w-12 h-12 text-purple-600 animate-pulse mx-auto mb-4" />
+              <p className="text-gray-600">로딩 중...</p>
+            </div>
           ) : !myCouponsData || myCouponsData.data.length === 0 ? (
-            <p className="text-gray-500">보유한 쿠폰이 없습니다.</p>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-12 text-center border border-gray-100">
+              <XCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">보유한 쿠폰이 없습니다.</p>
+            </div>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {myCouponsData.data.map((coupon: IssuedCoupon) => (
-                <div
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {myCouponsData.data.map((coupon: IssuedCoupon, index: number) => (
+                <motion.div
                   key={coupon.id}
-                  className={`p-6 rounded-lg shadow ${
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.05 }}
+                  className={`relative overflow-hidden p-6 rounded-2xl shadow-xl transition-all border-2 ${
                     coupon.status === 'ISSUED' && !coupon.isExpired
-                      ? 'bg-white border-2 border-blue-500'
-                      : 'bg-gray-100'
+                      ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-emerald-300'
+                      : 'bg-gray-100 border-gray-300'
                   }`}
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {coupon.couponName}
-                    </h3>
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded ${
-                        coupon.status === 'ISSUED' && !coupon.isExpired
-                          ? 'bg-green-100 text-green-800'
-                          : coupon.status === 'USED'
-                          ? 'bg-gray-200 text-gray-600'
-                          : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {coupon.status === 'ISSUED' && !coupon.isExpired
-                        ? '사용 가능'
-                        : coupon.status === 'USED'
-                        ? '사용 완료'
-                        : '만료'}
-                    </span>
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-white/20 rounded-full -mr-12 -mt-12" />
+
+                  <div className="relative">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="text-xl font-bold text-gray-900 flex-1">
+                        {coupon.couponName}
+                      </h3>
+                      <span
+                        className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-xl shadow-lg ${
+                          coupon.status === 'ISSUED' && !coupon.isExpired
+                            ? 'bg-emerald-500 text-white'
+                            : coupon.status === 'USED'
+                            ? 'bg-gray-500 text-white'
+                            : 'bg-red-500 text-white'
+                        }`}
+                      >
+                        {coupon.status === 'ISSUED' && !coupon.isExpired ? (
+                          <><CheckCircle className="w-3 h-3" /> 사용 가능</>
+                        ) : coupon.status === 'USED' ? (
+                          <><CheckCircle className="w-3 h-3" /> 사용 완료</>
+                        ) : (
+                          <><XCircle className="w-3 h-3" /> 만료</>
+                        )}
+                      </span>
+                    </div>
+
+                    <p className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                      {coupon.discountValue}
+                      {coupon.discountType === 'AMOUNT' ? '원' : '%'}
+                    </p>
+
+                    <div className="space-y-2 mb-6 bg-white/60 rounded-xl p-4">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <Clock className="w-4 h-4" />
+                        <span className="font-medium">발급:</span>
+                        <span>{formatDate(coupon.issuedAt)}</span>
+                      </div>
+                      {coupon.usedAt && (
+                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                          <CheckCircle className="w-4 h-4" />
+                          <span className="font-medium">사용:</span>
+                          <span>{formatDate(coupon.usedAt)}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <XCircle className="w-4 h-4" />
+                        <span className="font-medium">만료:</span>
+                        <span>{formatDate(coupon.expiresAt)}</span>
+                      </div>
+                    </div>
+
+                    {coupon.status === 'ISSUED' && !coupon.isExpired && (
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleUseCoupon(coupon.id)}
+                        disabled={useMutation_.isPending}
+                        className="w-full py-3 px-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:from-emerald-600 hover:to-emerald-700 font-semibold shadow-lg shadow-emerald-500/30 transition-all"
+                      >
+                        {useMutation_.isPending ? '처리 중...' : '사용하기'}
+                      </motion.button>
+                    )}
                   </div>
-                  <p className="text-2xl font-bold text-blue-600 mb-3">
-                    {coupon.discountValue}
-                    {coupon.discountType === 'AMOUNT' ? '원' : '%'} 할인
-                  </p>
-                  <div className="space-y-1 text-sm text-gray-600 mb-4">
-                    <p>발급일: {formatDate(coupon.issuedAt)}</p>
-                    {coupon.usedAt && <p>사용일: {formatDate(coupon.usedAt)}</p>}
-                    <p>만료일: {formatDate(coupon.expiresAt)}</p>
-                  </div>
-                  {coupon.status === 'ISSUED' && !coupon.isExpired && (
-                    <button
-                      onClick={() => handleUseCoupon(coupon.id)}
-                      disabled={useMutation_.isPending}
-                      className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-                    >
-                      {useMutation_.isPending ? '처리 중...' : '사용하기'}
-                    </button>
-                  )}
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
