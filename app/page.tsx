@@ -37,6 +37,8 @@ export default function Home() {
     }
   };
 
+  const apiDocsUrl = `${(process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '')}/api/docs`;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-16">
@@ -166,6 +168,31 @@ export default function Home() {
                       <span className="text-sm">발급/사용 내역 저장</span>
                     </li>
                   </ul>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="h-full">
+              <div className="relative flex flex-col h-full overflow-hidden p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-indigo-50" />
+                <div className="relative">
+                  <div className="inline-flex items-center justify-center w-14 h-14 mb-4 bg-gradient-to-br from-slate-800 to-slate-600 rounded-xl shadow-lg shadow-slate-500/20">
+                    <FileText className="w-7 h-7 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Swagger 문서
+                  </h2>
+                  <p className="text-gray-600 mb-4">
+                    API 스펙과 예제를 한 번에 확인하세요. 서버가 켜져 있어야 열립니다.
+                  </p>
+                  <Link
+                    href={apiDocsUrl}
+                    target="_blank"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black shadow-lg shadow-slate-500/30 transition-all font-medium"
+                  >
+                    <FileText className="w-4 h-4" />
+                    API Docs 열기
+                  </Link>
                 </div>
               </div>
             </motion.div>
