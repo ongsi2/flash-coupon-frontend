@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { couponAPI } from '@/lib/api';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { User, Home, Zap } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -21,10 +23,7 @@ export default function RegisterPage() {
 
     try {
       const user = await couponAPI.createUser(formData);
-
-      // Save user to localStorage
       localStorage.setItem('currentUser', JSON.stringify(user));
-
       alert('회원가입이 완료되었습니다!');
       router.push('/user');
     } catch (err: any) {
@@ -36,69 +35,92 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md w-full mx-4">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">회원가입</h1>
-            <p className="text-gray-600">쿠폰을 발급받으려면 회원가입이 필요합니다.</p>
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-md w-full"
+      >
+        <div className="arcade-card p-8 border border-[var(--neon-cyan)]"
+             style={{ boxShadow: '0 0 40px rgba(0, 255, 255, 0.15)' }}>
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 mb-4 border-2 border-[var(--neon-cyan)]"
+                 style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
+              <User className="w-8 h-8 text-[var(--neon-cyan)]" />
+            </div>
+            <h1 className="font-arcade text-3xl neon-cyan mb-2">REGISTER</h1>
+            <p className="text-[var(--text-secondary)]">새로운 플레이어 등록</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                이메일 *
+              <label className="block text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                EMAIL *
               </label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="example@email.com"
+                className="arcade-input w-full"
+                placeholder="player@game.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                이름 *
+              <label className="block text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                NAME *
               </label>
               <input
                 type="text"
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="홍길동"
+                className="arcade-input w-full"
+                placeholder="플레이어 이름"
               />
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="arcade-card p-3 border border-[var(--neon-pink)]">
+                <p className="text-sm neon-pink">{error}</p>
               </div>
             )}
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 px-4 rounded-lg font-medium text-white ${
-                isLoading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700'
-              }`}
+              className="w-full arcade-btn arcade-btn-filled disabled:opacity-50"
             >
-              {isLoading ? '가입 중...' : '회원가입'}
-            </button>
+              <span className="flex items-center justify-center gap-2">
+                {isLoading ? (
+                  <>
+                    <Zap className="w-5 h-5 animate-pulse" />
+                    PROCESSING...
+                  </>
+                ) : (
+                  <>
+                    <User className="w-5 h-5" />
+                    CREATE ACCOUNT
+                  </>
+                )}
+              </span>
+            </motion.button>
           </form>
 
+          {/* Footer */}
           <div className="mt-6 text-center">
-            <Link href="/" className="text-sm text-blue-600 hover:text-blue-700">
-              ← 홈으로 돌아가기
+            <Link href="/" className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--neon-cyan)] transition-colors">
+              <Home className="w-4 h-4" />
+              <span className="text-sm font-arcade">BACK TO HOME</span>
             </Link>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -6,6 +6,8 @@ import { couponAPI } from '@/lib/api';
 import type { CreateCouponDto } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Plus, ArrowLeft, Zap, Clock, Tag, Percent, Hash } from 'lucide-react';
 
 export default function CreateCouponPage() {
   const router = useRouter();
@@ -61,16 +63,11 @@ export default function CreateCouponPage() {
     createMutation.mutate(formData);
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        name === 'discountValue' || name === 'totalQuantity'
-          ? Number(value)
-          : value,
+      [name]: name === 'discountValue' || name === 'totalQuantity' ? Number(value) : value,
     }));
   };
 
@@ -101,24 +98,53 @@ export default function CreateCouponPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen py-8">
+      <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto">
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">새 쿠폰 만들기</h1>
-            <Link
-              href="/admin"
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-            >
-              취소
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 flex items-center justify-between"
+          >
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-2 h-2 bg-[var(--neon-green)] rounded-full animate-pulse"
+                     style={{ boxShadow: '0 0 10px var(--neon-green)' }} />
+                <span className="text-[var(--text-muted)] text-sm font-arcade uppercase tracking-widest">
+                  Coupon Creator
+                </span>
+              </div>
+              <h1 className="font-arcade text-3xl neon-green">NEW_COUPON</h1>
+            </div>
+            <Link href="/admin">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="arcade-btn arcade-btn-cyan"
+              >
+                <span className="flex items-center gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  BACK
+                </span>
+              </motion.button>
             </Link>
-          </div>
+          </motion.div>
 
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
+          {/* Form */}
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            onSubmit={handleSubmit}
+            className="arcade-card p-8 border border-[var(--neon-green)]"
+            style={{ boxShadow: '0 0 30px rgba(0, 255, 136, 0.1)' }}
+          >
             <div className="space-y-6">
+              {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  쿠폰명 *
+                <label className="flex items-center gap-2 text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                  <Tag className="w-4 h-4" />
+                  COUPON_NAME *
                 </label>
                 <input
                   type="text"
@@ -126,21 +152,23 @@ export default function CreateCouponPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="arcade-input w-full"
                   placeholder="예: 100개 한정 선착순 쿠폰"
                 />
               </div>
 
+              {/* Type */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  타입 *
+                <label className="flex items-center gap-2 text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                  <Zap className="w-4 h-4" />
+                  TYPE *
                 </label>
                 <select
                   name="type"
                   value={formData.type}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="arcade-select w-full"
                 >
                   <option value="FCFS">FCFS (선착순)</option>
                   <option value="LOTTERY">LOTTERY (추첨)</option>
@@ -148,25 +176,28 @@ export default function CreateCouponPage() {
                 </select>
               </div>
 
+              {/* Discount */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    할인 타입 *
+                  <label className="flex items-center gap-2 text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                    <Percent className="w-4 h-4" />
+                    DISCOUNT_TYPE *
                   </label>
                   <select
                     name="discountType"
                     value={formData.discountType}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="arcade-select w-full"
                   >
                     <option value="AMOUNT">금액 할인</option>
                     <option value="RATE">비율 할인</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    할인 값 *
+                  <label className="flex items-center gap-2 text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                    <Hash className="w-4 h-4" />
+                    DISCOUNT_VALUE *
                   </label>
                   <input
                     type="number"
@@ -175,17 +206,17 @@ export default function CreateCouponPage() {
                     onChange={handleChange}
                     required
                     min="1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder={
-                      formData.discountType === 'AMOUNT' ? '원' : '%'
-                    }
+                    className="arcade-input w-full"
+                    placeholder={formData.discountType === 'AMOUNT' ? '원' : '%'}
                   />
                 </div>
               </div>
 
+              {/* Quantity */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  총 수량 *
+                <label className="flex items-center gap-2 text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                  <Hash className="w-4 h-4" />
+                  TOTAL_QUANTITY *
                 </label>
                 <input
                   type="number"
@@ -194,44 +225,48 @@ export default function CreateCouponPage() {
                   onChange={handleChange}
                   required
                   min="1"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="개"
+                  className="arcade-input w-full"
+                  placeholder="발급할 총 수량"
                 />
               </div>
 
+              {/* Quick Date */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  빠른 기간 설정
+                <label className="flex items-center gap-2 text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                  <Clock className="w-4 h-4" />
+                  QUICK_DATE
                 </label>
-                <div className="flex gap-2 mb-3">
+                <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
                     onClick={() => setQuickDate('now')}
-                    className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                    className="px-3 py-2 text-sm arcade-card border border-[var(--border-glow)] text-[var(--text-secondary)] hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] transition-all"
                   >
-                    지금 ~ 1주일
+                    NOW ~ 1WEEK
                   </button>
                   <button
                     type="button"
                     onClick={() => setQuickDate('tomorrow')}
-                    className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                    className="px-3 py-2 text-sm arcade-card border border-[var(--border-glow)] text-[var(--text-secondary)] hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] transition-all"
                   >
-                    내일 ~ 1주일
+                    TOMORROW ~ 1WEEK
                   </button>
                   <button
                     type="button"
                     onClick={() => setQuickDate('month')}
-                    className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                    className="px-3 py-2 text-sm arcade-card border border-[var(--border-glow)] text-[var(--text-secondary)] hover:border-[var(--neon-cyan)] hover:text-[var(--neon-cyan)] transition-all"
                   >
-                    지금 ~ 1개월
+                    NOW ~ 1MONTH
                   </button>
                 </div>
               </div>
 
+              {/* Date Range */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    시작일 *
+                  <label className="flex items-center gap-2 text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                    <Clock className="w-4 h-4" />
+                    START_DATE *
                   </label>
                   <input
                     type="datetime-local"
@@ -239,12 +274,13 @@ export default function CreateCouponPage() {
                     value={formData.startAt}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="arcade-input w-full"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    종료일 *
+                  <label className="flex items-center gap-2 text-sm font-arcade text-[var(--neon-cyan)] mb-2">
+                    <Clock className="w-4 h-4" />
+                    END_DATE *
                   </label>
                   <input
                     type="datetime-local"
@@ -252,61 +288,73 @@ export default function CreateCouponPage() {
                     value={formData.endAt}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="arcade-input w-full"
                   />
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="font-medium text-blue-900 mb-2">미리보기</h3>
-                <div className="text-sm text-blue-800 space-y-1">
+              {/* Preview */}
+              <div className="arcade-card p-4 border border-[var(--neon-magenta)]">
+                <h3 className="font-arcade text-[var(--neon-magenta)] mb-3">PREVIEW</h3>
+                <div className="space-y-2 text-sm text-[var(--text-secondary)]">
                   <p>
-                    <strong>쿠폰명:</strong> {formData.name || '(입력 필요)'}
+                    <span className="text-[var(--text-muted)]">NAME:</span>{' '}
+                    <span className="neon-cyan">{formData.name || '(입력 필요)'}</span>
                   </p>
                   <p>
-                    <strong>할인:</strong>{' '}
-                    {formData.discountValue > 0
-                      ? `${formData.discountValue}${
-                          formData.discountType === 'AMOUNT' ? '원' : '%'
-                        }`
-                      : '(입력 필요)'}
+                    <span className="text-[var(--text-muted)]">DISCOUNT:</span>{' '}
+                    <span className="neon-green">
+                      {formData.discountValue > 0
+                        ? `${formData.discountValue}${formData.discountType === 'AMOUNT' ? '원' : '%'}`
+                        : '(입력 필요)'}
+                    </span>
                   </p>
                   <p>
-                    <strong>수량:</strong>{' '}
-                    {formData.totalQuantity > 0
-                      ? `${formData.totalQuantity}개`
-                      : '(입력 필요)'}
+                    <span className="text-[var(--text-muted)]">QUANTITY:</span>{' '}
+                    <span className="neon-orange">
+                      {formData.totalQuantity > 0 ? `${formData.totalQuantity}개` : '(입력 필요)'}
+                    </span>
                   </p>
                   <p>
-                    <strong>기간:</strong>{' '}
+                    <span className="text-[var(--text-muted)]">PERIOD:</span>{' '}
                     {formData.startAt && formData.endAt
-                      ? `${new Date(formData.startAt).toLocaleString(
-                          'ko-KR'
-                        )} ~ ${new Date(formData.endAt).toLocaleString(
-                          'ko-KR'
-                        )}`
+                      ? `${new Date(formData.startAt).toLocaleString('ko-KR')} ~ ${new Date(formData.endAt).toLocaleString('ko-KR')}`
                       : '(입력 필요)'}
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-4">
-                <button
+              {/* Actions */}
+              <div className="flex gap-4 pt-4">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="flex-1 py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="flex-1 arcade-btn arcade-btn-filled disabled:opacity-50"
                 >
-                  {createMutation.isPending ? '생성 중...' : '쿠폰 생성하기'}
-                </button>
-                <Link
-                  href="/admin"
-                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium"
-                >
-                  취소
+                  <span className="flex items-center justify-center gap-2">
+                    {createMutation.isPending ? (
+                      <>
+                        <Zap className="w-5 h-5 animate-pulse" />
+                        CREATING...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-5 h-5" />
+                        CREATE COUPON
+                      </>
+                    )}
+                  </span>
+                </motion.button>
+                <Link href="/admin" className="flex-shrink-0">
+                  <button type="button" className="arcade-btn arcade-btn-pink h-full">
+                    CANCEL
+                  </button>
                 </Link>
               </div>
             </div>
-          </form>
+          </motion.form>
         </div>
       </div>
     </div>

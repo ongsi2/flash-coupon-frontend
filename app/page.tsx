@@ -3,325 +3,412 @@
 import Link from "next/link";
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, Shield, Activity, Zap, Database, Lock, Calendar, FileText, Sparkles } from 'lucide-react';
+import { User, Shield, Activity, Zap, Database, Lock, FileText } from 'lucide-react';
 import type { User as UserType } from '@/lib/types';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+  const [glitchActive, setGlitchActive] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       setCurrentUser(JSON.parse(savedUser));
     }
+
+    // Random glitch effect
+    const glitchInterval = setInterval(() => {
+      setGlitchActive(true);
+      setTimeout(() => setGlitchActive(false), 200);
+    }, 5000);
+
+    return () => clearInterval(glitchInterval);
   }, []);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
 
   const apiDocsUrl = `${(process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '')}/api/docs`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-16">
-        <motion.div
-          className="max-w-5xl mx-auto"
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-        >
-          <motion.div variants={itemVariants} className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm mb-6">
-              <Sparkles className="w-4 h-4 text-indigo-600" />
-              <span className="text-sm font-medium text-gray-700">Redis 기반 고성능 쿠폰 시스템</span>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Animated background particles */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-[var(--neon-cyan)]"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              boxShadow: '0 0 10px var(--neon-cyan)',
+            }}
+            animate={{
+              y: [0, -1000],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 10 + Math.random() * 10,
+              repeat: Infinity,
+              delay: Math.random() * 10,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="container mx-auto px-4 py-16 relative z-10">
+        <div className="max-w-5xl mx-auto">
+
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            {/* System status indicator */}
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <div className="w-2 h-2 bg-[var(--neon-green)] rounded-full animate-pulse"
+                   style={{ boxShadow: '0 0 10px var(--neon-green)' }} />
+              <span className="text-[var(--text-muted)] text-sm font-arcade uppercase tracking-widest">
+                System Online
+              </span>
+              <div className="w-2 h-2 bg-[var(--neon-green)] rounded-full animate-pulse"
+                   style={{ boxShadow: '0 0 10px var(--neon-green)' }} />
             </div>
-            <h1 className="text-6xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
-              Flash Coupon
+
+            {/* Main title with glitch effect */}
+            <h1
+              className={`font-arcade text-6xl md:text-8xl font-black mb-4 tracking-tight ${glitchActive ? 'glitch' : ''}`}
+              data-text="FLASH COUPON"
+              style={{
+                color: 'var(--neon-cyan)',
+                textShadow: `
+                  0 0 10px var(--neon-cyan),
+                  0 0 20px var(--neon-cyan),
+                  0 0 40px var(--neon-cyan),
+                  0 0 80px var(--neon-magenta)
+                `,
+              }}
+            >
+              FLASH COUPON
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              선착순 쿠폰 발급 시스템 - 대규모 동시성 처리를 위한 최적화된 솔루션
+
+            <p className="text-[var(--text-secondary)] text-lg md:text-xl tracking-wide">
+              <span className="neon-magenta">[</span>
+              선착순 쿠폰 발급 시스템
+              <span className="neon-magenta">]</span>
+            </p>
+            <p className="text-[var(--text-muted)] text-sm mt-2">
+              Redis Lua Script // Atomic Operations // High Concurrency
             </p>
           </motion.div>
 
+          {/* User status bar */}
           {currentUser && (
             <motion.div
-              variants={itemVariants}
-              className="mb-10 p-6 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-indigo-100"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mb-10 arcade-card p-4 border border-[var(--neon-green)]"
+              style={{ boxShadow: '0 0 20px rgba(0, 255, 136, 0.2)' }}
             >
-              <div className="flex items-center justify-center gap-2">
-                <User className="w-5 h-5 text-indigo-600" />
-                <p className="text-gray-700">
-                  환영합니다, <strong className="text-indigo-600 font-semibold">{currentUser.name}</strong>님!
-                </p>
+              <div className="flex items-center justify-center gap-4">
+                <User className="w-5 h-5 text-[var(--neon-green)]" />
+                <span className="text-[var(--text-secondary)]">PLAYER:</span>
+                <span className="neon-green font-arcade font-bold">{currentUser.name}</span>
+                <span className="text-[var(--text-muted)]">//</span>
+                <span className="text-[var(--text-muted)] text-sm">{currentUser.email}</span>
               </div>
             </motion.div>
           )}
 
+          {/* Main navigation grid */}
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            {/* User Page */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <Link href="/user" className="block">
+                <div className="arcade-card p-8 border border-[var(--neon-cyan)] hover:border-[var(--neon-cyan)] transition-all group"
+                     style={{ boxShadow: '0 0 20px rgba(0, 255, 255, 0.1)' }}>
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 border border-[var(--neon-cyan)] group-hover:bg-[var(--neon-cyan)] group-hover:bg-opacity-10 transition-all"
+                         style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
+                      <User className="w-8 h-8 text-[var(--neon-cyan)]" />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="font-arcade text-2xl text-[var(--neon-cyan)] mb-2 group-hover:tracking-wider transition-all">
+                        USER_PORTAL
+                      </h2>
+                      <p className="text-[var(--text-secondary)] text-sm">
+                        쿠폰 발급받기 // 내 쿠폰 조회 // 쿠폰 사용
+                      </p>
+                      <div className="mt-4 flex items-center gap-2 text-[var(--text-muted)] text-xs">
+                        <span className="px-2 py-1 border border-[var(--border-glow)]">ISSUE</span>
+                        <span className="px-2 py-1 border border-[var(--border-glow)]">VIEW</span>
+                        <span className="px-2 py-1 border border-[var(--border-glow)]">USE</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Admin Page */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <Link href="/admin" className="block">
+                <div className="arcade-card p-8 border border-[var(--neon-magenta)] hover:border-[var(--neon-magenta)] transition-all group"
+                     style={{ boxShadow: '0 0 20px rgba(255, 0, 255, 0.1)' }}>
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 border border-[var(--neon-magenta)] group-hover:bg-[var(--neon-magenta)] group-hover:bg-opacity-10 transition-all"
+                         style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
+                      <Shield className="w-8 h-8 text-[var(--neon-magenta)]" />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="font-arcade text-2xl text-[var(--neon-magenta)] mb-2 group-hover:tracking-wider transition-all">
+                        ADMIN_CONSOLE
+                      </h2>
+                      <p className="text-[var(--text-secondary)] text-sm">
+                        쿠폰 관리 // 통계 조회 // 쿠폰 생성
+                      </p>
+                      <div className="mt-4 flex items-center gap-2 text-[var(--text-muted)] text-xs">
+                        <span className="px-2 py-1 border border-[var(--border-glow)]">MANAGE</span>
+                        <span className="px-2 py-1 border border-[var(--border-glow)]">STATS</span>
+                        <span className="px-2 py-1 border border-[var(--border-glow)]">CREATE</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Realtime Page */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <Link href="/realtime" className="block">
+                <div className="arcade-card p-8 border border-[var(--neon-green)] hover:border-[var(--neon-green)] transition-all group"
+                     style={{ boxShadow: '0 0 20px rgba(0, 255, 136, 0.1)' }}>
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 border border-[var(--neon-green)] group-hover:bg-[var(--neon-green)] group-hover:bg-opacity-10 transition-all relative"
+                         style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
+                      <Activity className="w-8 h-8 text-[var(--neon-green)]" />
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--neon-green)] rounded-full animate-ping" />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="font-arcade text-2xl text-[var(--neon-green)] mb-2 group-hover:tracking-wider transition-all">
+                        LIVE_MONITOR
+                      </h2>
+                      <p className="text-[var(--text-secondary)] text-sm">
+                        실시간 발급 현황 모니터링
+                      </p>
+                      <div className="mt-4 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-[var(--neon-green)] rounded-full animate-pulse" />
+                        <span className="text-[var(--neon-green)] text-xs font-arcade">STREAMING</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Features Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <div className="arcade-card p-8 border border-[var(--neon-orange)] h-full"
+                   style={{ boxShadow: '0 0 20px rgba(255, 102, 0, 0.1)' }}>
+                <div className="flex items-center gap-3 mb-6">
+                  <Zap className="w-6 h-6 text-[var(--neon-orange)]" />
+                  <h2 className="font-arcade text-xl text-[var(--neon-orange)]">
+                    CORE_FEATURES
+                  </h2>
+                </div>
+                <ul className="space-y-4">
+                  <li className="flex items-center gap-3 text-[var(--text-secondary)]">
+                    <Database className="w-4 h-4 text-[var(--neon-cyan)]" />
+                    <span className="text-sm">Redis Lua Script 원자적 발급</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-[var(--text-secondary)]">
+                    <Lock className="w-4 h-4 text-[var(--neon-magenta)]" />
+                    <span className="text-sm">중복 발급 완벽 차단</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-[var(--text-secondary)]">
+                    <Activity className="w-4 h-4 text-[var(--neon-green)]" />
+                    <span className="text-sm">실시간 재고 추적</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-[var(--text-secondary)]">
+                    <FileText className="w-4 h-4 text-[var(--neon-orange)]" />
+                    <span className="text-sm">발급/사용 내역 영속화</span>
+                  </li>
+                </ul>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* API Docs Link */}
           <motion.div
-            className="grid md:grid-cols-2 gap-6 mb-10 auto-rows-fr"
-            variants={containerVariants}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="mb-12"
           >
-            <motion.div variants={itemVariants} className="h-full">
-              <Link
-                href="/user"
-                className="group flex flex-col h-full relative overflow-hidden p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-indigo-200"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative">
-                  <div className="inline-flex items-center justify-center w-14 h-14 mb-4 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-lg shadow-indigo-500/30 group-hover:shadow-indigo-500/50 transition-shadow">
-                    <User className="w-7 h-7 text-white" />
+            <div className="arcade-card p-6 border border-[var(--border-glow)]">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <FileText className="w-6 h-6 text-[var(--text-muted)]" />
+                  <div>
+                    <p className="font-arcade text-[var(--text-primary)]">SWAGGER_API_DOCS</p>
+                    <p className="text-[var(--text-muted)] text-sm">API 스펙과 예제 확인 (서버 실행 필요)</p>
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">
-                    사용자 페이지
-                  </h2>
-                  <p className="text-gray-600">
-                    쿠폰 발급받기, 내 쿠폰 조회, 쿠폰 사용
-                  </p>
                 </div>
-              </Link>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="h-full">
-              <Link
-                href="/admin"
-                className="group flex flex-col h-full relative overflow-hidden p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-purple-200"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative">
-                  <div className="inline-flex items-center justify-center w-14 h-14 mb-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/30 group-hover:shadow-purple-500/50 transition-shadow">
-                    <Shield className="w-7 h-7 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
-                    관리자 대시보드
-                  </h2>
-                  <p className="text-gray-600">
-                    쿠폰 관리, 통계 조회, 쿠폰 생성
-                  </p>
-                </div>
-              </Link>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="h-full">
-              <Link
-                href="/realtime"
-                className="group flex flex-col h-full relative overflow-hidden p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative">
-                  <div className="inline-flex items-center justify-center w-14 h-14 mb-4 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg shadow-emerald-500/30 group-hover:shadow-emerald-500/50 transition-shadow">
-                    <Activity className="w-7 h-7 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2 group-hover:text-emerald-600 transition-colors">
-                    실시간 발급 현황
-                  </h2>
-                  <p className="text-gray-600">
-                    쿠폰 발급 현황 실시간 모니터링
-                  </p>
-                </div>
-              </Link>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="h-full">
-              <div className="relative flex flex-col h-full overflow-hidden p-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-2xl shadow-indigo-500/30 text-white">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12" />
-                <div className="relative">
-                  <div className="inline-flex items-center justify-center w-14 h-14 mb-4 bg-white/20 backdrop-blur-sm rounded-xl">
-                    <Zap className="w-7 h-7 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold mb-4">
-                    주요 기능
-                  </h2>
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-2">
-                      <Database className="w-4 h-4" />
-                      <span className="text-sm">Redis Lua Script 원자적 발급</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Lock className="w-4 h-4" />
-                      <span className="text-sm">중복 발급 방지</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span className="text-sm">쿠폰 기간 관리</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <FileText className="w-4 h-4" />
-                      <span className="text-sm">발급/사용 내역 저장</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="h-full">
-              <div className="relative flex flex-col h-full overflow-hidden p-8 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100">
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-indigo-50" />
-                <div className="relative">
-                  <div className="inline-flex items-center justify-center w-14 h-14 mb-4 bg-gradient-to-br from-slate-800 to-slate-600 rounded-xl shadow-lg shadow-slate-500/20">
-                    <FileText className="w-7 h-7 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    Swagger 문서
-                  </h2>
-                  <p className="text-gray-600 mb-4">
-                    API 스펙과 예제를 한 번에 확인하세요. 서버가 켜져 있어야 열립니다.
-                  </p>
-                  <Link
-                    href={apiDocsUrl}
-                    target="_blank"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black shadow-lg shadow-slate-500/30 transition-all font-medium"
-                  >
+                <Link
+                  href={apiDocsUrl}
+                  target="_blank"
+                  className="arcade-btn arcade-btn-cyan text-sm"
+                >
+                  <span className="flex items-center gap-2">
                     <FileText className="w-4 h-4" />
-                    API Docs 열기
-                  </Link>
-                </div>
+                    OPEN DOCS
+                  </span>
+                </Link>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
 
+          {/* Register CTA */}
           {!currentUser && (
             <motion.div
-              variants={itemVariants}
-              className="p-8 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-gray-100 text-center"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.7 }}
+              className="text-center"
             >
-              <p className="text-gray-800 font-medium mb-6 text-lg">
-                쿠폰을 발급받으려면 먼저 회원가입이 필요합니다
-              </p>
-              <Link
-                href="/register"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 font-semibold shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-300"
-              >
-                <User className="w-5 h-5" />
-                회원가입하기
-              </Link>
+              <div className="arcade-card p-8 border-2 border-[var(--neon-pink)]"
+                   style={{ boxShadow: '0 0 40px rgba(255, 0, 128, 0.2)' }}>
+                <p className="text-[var(--text-secondary)] text-lg mb-6">
+                  <span className="neon-pink">&gt;</span> 쿠폰을 발급받으려면 먼저 회원가입이 필요합니다 <span className="typing-cursor" />
+                </p>
+                <Link
+                  href="/register"
+                  className="arcade-btn arcade-btn-filled inline-flex items-center gap-3"
+                >
+                  <User className="w-5 h-5" />
+                  REGISTER NOW
+                </Link>
+              </div>
             </motion.div>
           )}
 
-          {/* Architecture & Flow */}
+          {/* Architecture Section */}
           <motion.div
-            variants={itemVariants}
-            className="mt-14"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="mt-16"
           >
-            <div className="mb-6 text-center">
-              <p className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm text-sm font-medium text-gray-700 border border-indigo-100">
-                <Zap className="w-4 h-4 text-indigo-600" />
-                아키텍처 & 흐름 한눈에 보기
-              </p>
-              <h2 className="mt-3 text-3xl font-bold text-gray-900">
+            <div className="text-center mb-8">
+              <h2 className="font-arcade text-2xl neon-cyan mb-2">SYSTEM_ARCHITECTURE</h2>
+              <p className="text-[var(--text-muted)] text-sm">
                 초당 발급을 지탱하는 핵심 설계
-              </h2>
-              <p className="mt-2 text-gray-600">
-                Redis 원자 처리 + DB 세이프티넷 + 헬스 모니터링으로 안정적 발급/사용을 보장합니다.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              <motion.div
-                whileHover={{ y: -4 }}
-                className="relative p-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5" />
-                <div className="relative flex items-center gap-3 mb-3">
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 font-bold">
-                    1
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-indigo-600">Atomic Issue</p>
-                    <h3 className="text-lg font-bold text-gray-900">Redis Lua 원자 발급</h3>
-                  </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {/* Step 1 */}
+              <div className="arcade-card p-6 border border-[var(--neon-cyan)]">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="font-arcade text-2xl neon-cyan">01</span>
+                  <div className="flex-1 h-px bg-gradient-to-r from-[var(--neon-cyan)] to-transparent" />
                 </div>
-                <p className="relative text-gray-700 text-sm leading-relaxed">
-                  중복 체크 → 재고 확인 → 감소를 한 스크립트로 처리해 레이스 컨디션을 차단하고, TTL로 발급 흔적을 관리합니다.
+                <h3 className="font-arcade text-[var(--neon-cyan)] mb-2">ATOMIC_ISSUE</h3>
+                <p className="text-[var(--text-secondary)] text-sm leading-relaxed">
+                  Redis Lua Script로 중복체크 → 재고확인 → 감소를 원자적으로 처리
                 </p>
-              </motion.div>
+              </div>
 
-              <motion.div
-                whileHover={{ y: -4 }}
-                className="relative p-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5" />
-                <div className="relative flex items-center gap-3 mb-3">
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 font-bold">
-                    2
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-emerald-600">Safety Net</p>
-                    <h3 className="text-lg font-bold text-gray-900">DB Unique 세이프티</h3>
-                  </div>
+              {/* Step 2 */}
+              <div className="arcade-card p-6 border border-[var(--neon-green)]">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="font-arcade text-2xl neon-green">02</span>
+                  <div className="flex-1 h-px bg-gradient-to-r from-[var(--neon-green)] to-transparent" />
                 </div>
-                <p className="relative text-gray-700 text-sm leading-relaxed">
-                  `(userId, couponId)` 유니크로 2차 중복을 차단하고, 발급/사용 내역을 영속화해 통계와 추적성을 확보합니다.
+                <h3 className="font-arcade text-[var(--neon-green)] mb-2">SAFETY_NET</h3>
+                <p className="text-[var(--text-secondary)] text-sm leading-relaxed">
+                  DB Unique 제약으로 2차 중복 차단, 발급 내역 영속화
                 </p>
-              </motion.div>
+              </div>
 
-              <motion.div
-                whileHover={{ y: -4 }}
-                className="relative p-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-amber-500/5" />
-                <div className="relative flex items-center gap-3 mb-3">
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-amber-50 text-amber-600 font-bold">
-                    3
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-amber-600">Sync & Health</p>
-                    <h3 className="text-lg font-bold text-gray-900">Redis-DB 동기화/모니터링</h3>
-                  </div>
+              {/* Step 3 */}
+              <div className="arcade-card p-6 border border-[var(--neon-orange)]">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="font-arcade text-2xl neon-orange">03</span>
+                  <div className="flex-1 h-px bg-gradient-to-r from-[var(--neon-orange)] to-transparent" />
                 </div>
-                <p className="relative text-gray-700 text-sm leading-relaxed">
-                  관리자가 Redis 재고를 DB 기준으로 동기화할 수 있고, 실시간 대시보드로 발급률/재고를 모니터링합니다.
+                <h3 className="font-arcade text-[var(--neon-orange)] mb-2">SYNC_HEALTH</h3>
+                <p className="text-[var(--text-secondary)] text-sm leading-relaxed">
+                  Redis-DB 동기화, 실시간 대시보드 모니터링
                 </p>
-              </motion.div>
+              </div>
             </div>
 
-            <div className="mt-8 p-6 bg-white rounded-2xl shadow-lg border border-gray-100">
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-sm font-semibold">
-                  <Activity className="w-4 h-4" />
-                  Data Flow
-                </span>
-                <span className="text-xs text-gray-500">클라이언트 → API → Redis → DB</span>
+            {/* Data Flow */}
+            <div className="mt-8 arcade-card p-6 border border-[var(--border-glow)]">
+              <div className="flex items-center gap-3 mb-6">
+                <Activity className="w-5 h-5 text-[var(--neon-cyan)]" />
+                <span className="font-arcade text-[var(--neon-cyan)]">DATA_FLOW</span>
               </div>
-              <div className="grid md:grid-cols-4 gap-4 text-sm text-gray-800">
-                <div className="p-4 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 shadow-sm">
-                  <p className="font-bold text-gray-900 mb-1">1) 요청</p>
-                  <p className="text-gray-600">프론트에서 발급/사용 API 호출 (React Query로 폴링/캐싱).</p>
+              <div className="grid md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="arcade-card p-4 border border-[var(--border-glow)] mb-2">
+                    <p className="font-arcade text-[var(--neon-cyan)] text-sm">REQUEST</p>
+                  </div>
+                  <p className="text-[var(--text-muted)] text-xs">Frontend → API</p>
                 </div>
-                <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-indigo-100 shadow-sm">
-                  <p className="font-bold text-gray-900 mb-1">2) Redis</p>
-                  <p className="text-gray-600">Lua 스크립트로 중복/재고 체크·감소, 발급 흔적 TTL 기록.</p>
+                <div className="text-center">
+                  <div className="arcade-card p-4 border border-[var(--border-glow)] mb-2">
+                    <p className="font-arcade text-[var(--neon-magenta)] text-sm">REDIS</p>
+                  </div>
+                  <p className="text-[var(--text-muted)] text-xs">Lua Atomic Op</p>
                 </div>
-                <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-100 shadow-sm">
-                  <p className="font-bold text-gray-900 mb-1">3) DB</p>
-                  <p className="text-gray-600">성공 건만 비동기 영속화, 유니크 제약으로 2차 보호.</p>
+                <div className="text-center">
+                  <div className="arcade-card p-4 border border-[var(--border-glow)] mb-2">
+                    <p className="font-arcade text-[var(--neon-green)] text-sm">DATABASE</p>
+                  </div>
+                  <p className="text-[var(--text-muted)] text-xs">Persist & Verify</p>
                 </div>
-                <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 shadow-sm">
-                  <p className="font-bold text-gray-900 mb-1">4) 관측/동기화</p>
-                  <p className="text-gray-600">실시간 대시보드로 수치 확인, 필요 시 Redis 재고를 DB 기준으로 재계산.</p>
+                <div className="text-center">
+                  <div className="arcade-card p-4 border border-[var(--border-glow)] mb-2">
+                    <p className="font-arcade text-[var(--neon-orange)] text-sm">MONITOR</p>
+                  </div>
+                  <p className="text-[var(--text-muted)] text-xs">Realtime Stats</p>
                 </div>
               </div>
             </div>
           </motion.div>
-        </motion.div>
+
+          {/* Footer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="mt-16 text-center"
+          >
+            <p className="text-[var(--text-muted)] text-xs font-arcade">
+              FLASH COUPON SYSTEM v1.0 // POWERED BY REDIS + POSTGRESQL
+            </p>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
