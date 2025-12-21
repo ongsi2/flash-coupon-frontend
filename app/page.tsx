@@ -1,10 +1,34 @@
 'use client';
 
 import Link from "next/link";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { User, Shield, Activity, Zap, Database, Lock, FileText } from 'lucide-react';
 import type { User as UserType } from '@/lib/types';
+
+// Fixed particle positions to avoid hydration mismatch
+const PARTICLES = [
+  { left: 5, top: 10, duration: 12, delay: 0 },
+  { left: 15, top: 80, duration: 15, delay: 2 },
+  { left: 25, top: 30, duration: 18, delay: 4 },
+  { left: 35, top: 60, duration: 11, delay: 1 },
+  { left: 45, top: 20, duration: 14, delay: 3 },
+  { left: 55, top: 90, duration: 16, delay: 5 },
+  { left: 65, top: 40, duration: 13, delay: 6 },
+  { left: 75, top: 70, duration: 17, delay: 7 },
+  { left: 85, top: 15, duration: 19, delay: 8 },
+  { left: 95, top: 55, duration: 12, delay: 9 },
+  { left: 10, top: 45, duration: 14, delay: 1.5 },
+  { left: 20, top: 75, duration: 16, delay: 3.5 },
+  { left: 30, top: 25, duration: 11, delay: 5.5 },
+  { left: 40, top: 85, duration: 18, delay: 7.5 },
+  { left: 50, top: 35, duration: 15, delay: 0.5 },
+  { left: 60, top: 65, duration: 13, delay: 2.5 },
+  { left: 70, top: 5, duration: 17, delay: 4.5 },
+  { left: 80, top: 95, duration: 12, delay: 6.5 },
+  { left: 90, top: 50, duration: 14, delay: 8.5 },
+  { left: 3, top: 33, duration: 16, delay: 9.5 },
+];
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
@@ -31,13 +55,13 @@ export default function Home() {
     <div className="min-h-screen relative overflow-hidden">
       {/* Animated background particles */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {PARTICLES.map((p, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-[var(--neon-cyan)]"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${p.left}%`,
+              top: `${p.top}%`,
               boxShadow: '0 0 10px var(--neon-cyan)',
             }}
             animate={{
@@ -45,9 +69,9 @@ export default function Home() {
               opacity: [0, 1, 0],
             }}
             transition={{
-              duration: 10 + Math.random() * 10,
+              duration: p.duration,
               repeat: Infinity,
-              delay: Math.random() * 10,
+              delay: p.delay,
             }}
           />
         ))}
